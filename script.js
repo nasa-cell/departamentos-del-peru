@@ -681,6 +681,12 @@ function setupBackgroundAudio() {
   backgroundAudio.volume = 0.16;
   backgroundAudio.preload = 'auto';
   backgroundAudio.loop = true;
+  backgroundAudio.addEventListener('ended', () => {
+    backgroundAudio.currentTime = 0;
+    backgroundAudio.play().catch(() => {
+      // Evita errores si el navegador bloquea la reproducción automática.
+    });
+  });
 }
 
 function playBackgroundMusic() {
