@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dado de Departamentos del Perú</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="dice-panel">
+      <div class="dice-shell" id="diceShell" tabindex="0" role="button" aria-label="Lanzar el dado">
+        <div class="dice-frame"></div>
+        <div class="dice" id="dice">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face right"></div>
+          <div class="face left"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+        <div class="shine" id="shine"></div>
+      </div>
+      <div class="dice-label">Departamentos del Perú</div>
+      <p class="dice-instruction">Haz clic en el dado para viajar por las regiones.</p>
+      <div class="dice-remaining">Quedan <span id="remainingCount">24</span> departamentos</div>
+      <button class="roll-button hidden" id="rollButton" type="button">De vuelta</button>
+      <div class="completion-message hidden" id="completionMessage">¡Felicidades! ¡Completaste todos los departamentos!</div>
+    </div>
+
+    <main class="info-area" id="infoArea">
+      <section class="department-card" id="departmentCard">
+        <div class="hero-block">
+          <div class="hero-text">
+            <span class="eyebrow">Explora Perú</span>
+            <h1 id="deptName">Descubre un departamento</h1>
+            <p class="subtitle" id="deptTagline">Haz clic en el dado y explora la historia, la gastronomía y los paisajes únicos de cada región peruana.</p>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-card">
+              <span>Capital</span>
+              <strong id="capitalStat">-</strong>
+            </div>
+            <div class="stat-card">
+              <span>Región natural</span>
+              <strong id="regionNaturalStat">-</strong>
+            </div>
+            <div class="stat-card">
+              <span>Población</span>
+              <strong id="populationStat">-</strong>
+            </div>
+            <div class="stat-card">
+              <span>Superficie</span>
+              <strong id="areaStat">-</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="headline-chips">
+          <span><strong>Gastronomía destacada:</strong> <span id="gastronomyChip">-</span></span>
+          <span><strong>Lugar favorito:</strong> <span id="touristSpotChip">-</span></span>
+        </div>
+
+        <article class="content-block video-preview" id="videoPreview">
+          <h2>Video recomendado</h2>
+          <div class="video-embed-placeholder">Selecciona un departamento para ver la vista previa aquí.</div>
+        </article>
+
+        <article class="content-block button-panel" id="infoButtons">
+          <button type="button" class="info-button" data-target="provincesSection">Provincias</button>
+          <button type="button" class="info-button" data-target="gastronomySection">Gastronomía</button>
+          <button type="button" class="info-button" data-target="touristSpotsSection">Lugares</button>
+          <button type="button" class="info-button" data-target="floraFaunaSection">Flora/Fauna</button>
+          <button type="button" class="info-button" data-target="economySection">Economía</button>
+          <button type="button" class="info-button" data-target="festivitiesSection">Festividades</button>
+          <button type="button" class="info-button" data-target="historySection">Historia</button>
+          <button type="button" class="info-button" data-target="curiositiesSection">Curiosidades</button>
+        </article>
+
+        <article class="content-block hidden" id="provincesSection">
+          <h2>Provincias</h2>
+          <p id="provinces">-</p>
+        </article>
+
+        <article class="content-block hidden" id="gastronomySection">
+          <h2>Gastronomía</h2>
+          <p id="gastronomy">-</p>
+        </article>
+
+        <article class="content-block hidden" id="touristSpotsSection">
+          <h2>Lugares turísticos</h2>
+          <p id="touristSpots">-</p>
+        </article>
+
+        <article class="content-block split-block hidden" id="floraFaunaSection">
+          <div>
+            <h2>Flora</h2>
+            <p id="flora">-</p>
+          </div>
+          <div>
+            <h2>Fauna</h2>
+            <p id="fauna">-</p>
+          </div>
+        </article>
+
+        <article class="content-block hidden" id="economySection">
+          <h2>Actividad económica</h2>
+          <p id="economy">-</p>
+        </article>
+
+        <article class="content-block split-block hidden" id="festivitiesSection">
+          <div>
+            <h2>Festividades</h2>
+            <p id="festivities">-</p>
+          </div>
+          <div>
+            <h2>Historia</h2>
+            <p id="history">-</p>
+          </div>
+        </article>
+
+        <article class="content-block hidden" id="curiositiesSection">
+          <h2>Datos curiosos</h2>
+          <p id="curiosities">-</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <audio id="backgroundAudio" loop preload="auto" src="musica-fondo.mp3"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
