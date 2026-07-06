@@ -24,7 +24,9 @@
       <div class="dice-label">Departamentos del Perú</div>
       <p class="dice-instruction">Haz clic en el dado para viajar por las regiones.</p>
       <div class="dice-remaining">Quedan <span id="remainingCount">24</span> departamentos</div>
+      <button class="professor-button" id="professorButton" type="button" onclick="window.location.href='profesor.html'">Profesor</button>
       <button class="roll-button hidden" id="rollButton" type="button">De vuelta</button>
+      <a class="roll-button hidden" id="completionQuizButton" href="http://127.0.0.1:5500/login.html">Ir al cuestionario</a>
       <div class="completion-message hidden" id="completionMessage">¡Felicidades! ¡Completaste todos los departamentos!</div>
     </div>
 
@@ -127,8 +129,60 @@
     </main>
   </div>
 
-  <audio id="backgroundAudio" loop preload="auto" src="musica-fondo.mp3"></audio>
+  <!-- Reproductor de música de fondo para el dado -->
+  <audio id="backgroundMusic" loop>
+    <source src="musica-fondo.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Toast container for user messages -->
+  <div id="toast" aria-live="polite" aria-atomic="true" class="hidden"></div>
 
   <script src="script.js"></script>
+
+  <script>
+    // Control de música de fondo
+    const audioElement = document.getElementById('backgroundMusic');
+    let musicStarted = false;
+
+    // Recuperar posición anterior de la música
+    function restoreAudioPosition() {
+      const savedTime = sessionStorage.getItem('musicPosition');
+      if (savedTime && audioElement) {
+        audioElement.currentTime = parseFloat(savedTime);
+      }
+    }
+
+    // Guardar posición de la música cada segundo
+    function saveAudioPosition() {
+      if (audioElement && musicStarted) {
+        sessionStorage.setItem('musicPosition', audioElement.currentTime.toString());
+      }
+    }
+
+    // Iniciar música en el primer clic del usuario
+    function initializeMusic() {
+      if (!musicStarted && audioElement) {
+        musicStarted = true;
+        restoreAudioPosition();
+        audioElement.play().catch(err => console.log('Autoplay no permitido:', err));
+        // Guardar posición periódicamente
+        setInterval(saveAudioPosition, 500);
+        // Remover listeners después de iniciar
+        document.removeEventListener('click', initializeMusic);
+        document.removeEventListener('keypress', initializeMusic);
+        document.removeEventListener('touchstart', initializeMusic);
+      }
+    }
+
+    // Iniciar música en el primer clic, tecla o toque
+    document.addEventListener('click', initializeMusic, { once: true });
+    document.addEventListener('keypress', initializeMusic, { once: true });
+    document.addEventListener('touchstart', initializeMusic, { once: true });
+
+    // Si ya hay música guardada en sessionStorage, iniciar automáticamente
+    if (sessionStorage.getItem('musicPosition')) {
+      initializeMusic();
+    }
+  </script>
 </body>
 </html>

@@ -674,9 +674,10 @@ function onYouTubePlayerStateChange(event) {
 
 let isRolling = false;
 let departmentDeck = [];
+let rollButtonAttempts = 0;
 
 function setupBackgroundAudio() {
-  backgroundAudio = document.getElementById('backgroundAudio');
+  backgroundAudio = document.getElementById('backgroundMusic');
   if (!backgroundAudio) return;
   backgroundAudio.volume = 0.16;
   backgroundAudio.preload = 'auto';
@@ -728,11 +729,16 @@ function updateRemainingCount() {
   if (rollButton) {
     rollButton.classList.toggle('hidden', count !== 0);
   }
+  const completionQuizButton = document.querySelector('#completionQuizButton');
+  if (completionQuizButton) {
+    completionQuizButton.classList.toggle('hidden', count !== 0);
+  }
 }
 
 function pickDepartment() {
   if (departmentDeck.length === 0) {
-    resetDeck();
+    // No resetear automáticamente - el usuario debe hacer clic en "De vuelta"
+    return null;
   }
   const department = departmentDeck.pop();
   updateRemainingCount();
@@ -850,8 +856,138 @@ function setupInfoButtons() {
 
 function setupRollButton() {
   if (rollButton) {
-    rollButton.addEventListener('click', rollDice);
+    rollButton.addEventListener('click', () => {
+      resetDeck();
+      rollDice();
+      rollButtonAttempts++;
+    });
   }
+}
+
+function setupQuiz() {
+  // quizElements está definido en quiz.js, no en index.html
+  if (typeof quizElements === 'undefined') return;
+  if (!quizElements.quizButton) return;
+
+  quizElements.quizButton.addEventListener('click', () => {
+    if (quizElements.quizSection) {
+      quizElements.quizSection.classList.toggle('hidden');
+      quizElements.quizButton.classList.toggle('active');
+      quizElements.quizError?.classList.add('hidden');
+      hideQuizState();
+    }
+  });
+
+  quizElements.quizStartButton?.addEventListener('click', startQuiz);
+  quizElements.quizNextButton?.addEventListener('click', handleNextQuestion);
+  quizElements.quizRestartButton?.addEventListener('click', resetQuiz);
+}
+
+function hideQuizState() {
+  if (typeof quizState === 'undefined') return;
+  quizState.started = false;
+  quizState.currentIndex = 0;
+  quizState.score = 0;
+  quizState.selectedOption = null;
+
+  if (typeof quizElements !== 'undefined') {
+    quizElements.quizQuestionBlock?.classList.add('hidden');
+    quizElements.quizResult?.classList.add('hidden');
+    quizElements.quizNextButton?.classList.add('hidden');
+    quizElements.quizError?.classList.add('hidden');
+    quizElements.quizQuestionText && (quizElements.quizQuestionText.textContent = '');
+    quizElements.quizOptions && (quizElements.quizOptions.innerHTML = '');
+    quizElements.quizProgress && (quizElements.quizProgress.textContent = '');
+  }
+}
+
+function startQuiz() {
+  if (typeof quizElements === 'undefined') return;
+  const code = quizElements.quizCodeInput?.value?.trim();
+  const name = quizElements.quizNameInput?.value?.trim();
+
+  if (code !== '2026' || !name) {
+    quizElements.quizError?.classList.remove('hidden');
+    return;
+  }
+
+  quizElements.quizError?.classList.add('hidden');
+  quizState.playerName = name;
+  quizState.currentIndex = 0;
+  quizState.score = 0;
+  quizState.started = true;
+  quizElements.quizPlayerName && (quizElements.quizPlayerName.textContent = `Jugador: ${name}`);
+  quizElements.quizQuestionBlock?.classList.remove('hidden');
+  quizElements.quizResult?.classList.add('hidden');
+  quizElements.quizNextButton?.classList.add('hidden');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  if (typeof quizElements === 'undefined') return;
+  const question = quizQuestions[quizState.currentIndex];
+  if (!question) return;
+
+  quizState.selectedOption = null;
+  quizElements.quizQuestionText && (quizElements.quizQuestionText.textContent = question.text);
+  quizElements.quizProgress && (quizElements.quizProgress.textContent = `Pregunta ${quizState.currentIndex + 1} de ${quizQuestions.length}`);
+  quizElements.quizOptions && (quizElements.quizOptions.innerHTML = '');
+
+  question.options.forEach((optionText, optionIndex) => {
+    const optionButton = document.createElement('button');
+    optionButton.type = 'button';
+    optionButton.className = 'quiz-option';
+    optionButton.textContent = optionText;
+    optionButton.addEventListener('click', () => selectQuizOption(optionIndex));
+    quizElements.quizOptions?.appendChild(optionButton);
+  });
+}
+
+function selectQuizOption(optionIndex) {
+  if (!quizState.started || typeof quizElements === 'undefined') return;
+
+  quizState.selectedOption = optionIndex;
+  const buttons = quizElements.quizOptions?.querySelectorAll('.quiz-option') || [];
+  buttons.forEach((button, index) => {
+    button.classList.toggle('selected', index === optionIndex);
+  });
+
+  quizElements.quizNextButton?.classList.remove('hidden');
+}
+
+function handleNextQuestion() {
+  if (!quizState.started || quizState.selectedOption === null) return;
+
+  const question = quizQuestions[quizState.currentIndex];
+  if (quizState.selectedOption === question.answer) {
+    quizState.score += 1;
+  }
+
+  quizState.currentIndex += 1;
+  quizState.selectedOption = null;
+
+  if (quizState.currentIndex >= quizQuestions.length) {
+    showQuizResult();
+    return;
+  }
+
+  renderQuizQuestion();
+  quizElements.quizNextButton?.classList.add('hidden');
+}
+
+function showQuizResult() {
+  if (typeof quizElements === 'undefined') return;
+  quizState.started = false;
+  quizElements.quizQuestionBlock?.classList.add('hidden');
+  quizElements.quizResult?.classList.remove('hidden');
+  quizElements.quizScoreText && (quizElements.quizScoreText.textContent = `¡${quizState.playerName}! Obtuviste ${quizState.score} de ${quizQuestions.length} respuestas correctas.`);
+}
+
+function resetQuiz() {
+  if (typeof quizElements === 'undefined') return;
+  quizElements.quizCodeInput && (quizElements.quizCodeInput.value = '');
+  quizElements.quizNameInput && (quizElements.quizNameInput.value = '');
+  hideQuizState();
 }
 
 const placeholder = {
@@ -877,6 +1013,7 @@ function init() {
   loadYouTubeIframeAPI();
   setupInfoButtons();
   setupRollButton();
+  setupQuiz();
   resetDeck();
   setDiceFaceLabels([placeholder.name, 'Áncash', 'Cusco', 'Lima', 'Puno', 'Ica']);
   renderDepartment(placeholder);
@@ -884,9 +1021,14 @@ function init() {
 
 function rollDice() {
   if (isRolling) return;
-  isRolling = true;
-
+  
   const selected = pickDepartment();
+  if (selected === null) {
+    // El deck está vacío, no hacer nada
+    return;
+  }
+  
+  isRolling = true;
   const faceNames = getRandomDepartmentNames(6, selected.name);
   setDiceFaceLabels(faceNames);
 
@@ -920,5 +1062,26 @@ function handleDiceKey(event) {
 
 diceShell.addEventListener('click', rollDice);
 diceShell.addEventListener('keydown', handleDiceKey);
+
+// Seguir el scroll - el dado sube y baja con la rueda
+const dicePanel = document.querySelector('.dice-panel');
+let scrollOffset = 0;
+
+document.addEventListener('wheel', (e) => {
+  // Aumentar sensibilidad para que el movimiento sea más pronunciado
+  scrollOffset += e.deltaY * 0.6;
+  // Limitar el rango de movimiento: el dado puede subir más y bajar más
+  scrollOffset = Math.max(-600, Math.min(320, scrollOffset));
+  dicePanel.style.transform = `translateY(${scrollOffset}px)`;
+}, { passive: true });
+
+// Resetear cuando se deja de hacer scroll (opcional)
+let scrollTimeout;
+document.addEventListener('wheel', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    // Aquí podrías hacer que vuelva a la posición original si lo deseas
+  }, 1000);
+}, { passive: true });
 
 init();

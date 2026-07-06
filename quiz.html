@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuestionario de Departamentos del Perú</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .quiz-result .login-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2.2rem;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 380px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    /* todos los botones con ancho completo y centrados */
+    .quiz-result .login-buttons .quiz-start-button {
+      width: 100%;
+      padding: 0.75rem 1.6rem;
+      min-height: 64px;
+      border-radius: 8px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #ff9f1c 0%, #ff7a18 50%, #ff5a00 100%);
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      box-shadow: 0 18px 36px rgba(255, 120, 0, 0.2);
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* tercer elemento (el enlace) también ancho completo */
+    .quiz-result .login-buttons .quiz-start-button:nth-child(3) {
+      width: 100%;
+    }
+
+    .quiz-result .login-buttons .quiz-start-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(255, 149, 0, 0.5);
+      background: linear-gradient(135deg, #ffb347 0%, #fc9d3c 50%, #fa8316 100%);
+    }
+
+    .quiz-result .login-buttons .quiz-start-button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(255, 149, 0, 0.4);
+    }
+
+    .quiz-result .login-buttons .quiz-start-button:disabled {
+      background: linear-gradient(90deg, #7a7a7a 0%, #6a6a6a 50%, #5a5a5a 100%) !important;
+      opacity: 0.5 !important;
+      cursor: not-allowed !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+
+    .quiz-result .login-buttons .quiz-start-button:disabled:hover {
+      transform: none !important;
+      box-shadow: none !important;
+      background: linear-gradient(90deg, #7a7a7a 0%, #6a6a6a 50%, #5a5a5a 100%) !important;
+    }
+
+    @media (max-width: 900px) {
+      .quiz-result .login-buttons .quiz-start-button { flex: 0 1 280px; }
+      .quiz-result .login-buttons .quiz-start-button:nth-child(3) { flex-basis: 72%; }
+    }
+
+    @media (max-width: 520px) {
+      .quiz-result .login-buttons { gap: 0.8rem; }
+      .quiz-result .login-buttons .quiz-start-button { flex: 1 1 100%; }
+      .quiz-result .login-buttons .quiz-start-button:nth-child(3) { flex-basis: 100%; }
+    }
+
+    .quiz-result-form {
+      margin-bottom: 1.5rem;
+      width: 100%;
+      max-width: 840px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .quiz-result-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .quiz-grade-select {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      border: 2px solid rgba(56, 189, 248, 0.3);
+      background: rgba(16, 29, 55, 0.9);
+      color: #eef8ff;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .quiz-grade-select:hover {
+      border-color: rgba(56, 189, 248, 0.6);
+    }
+
+    .quiz-opinion-textarea {
+      width: 100%;
+      min-height: 220px;
+      margin-top: 0.8rem;
+      padding: 1.2rem 1.3rem;
+      border-radius: 18px;
+      border: 2px solid rgba(189, 147, 107, 0.5);
+      background: rgba(20, 16, 10, 0.95);
+      color: #f8fafc;
+      font-size: 1.05rem;
+      resize: vertical;
+      transition: all 0.25s ease;
+      max-width: 100%;
+    }
+
+    .status-bar {
+      margin-top: 1rem;
+      padding: 1rem 1.2rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+      font-weight: 700;
+      font-size: 0.98rem;
+      text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .status-bar.info {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #dbeafe;
+    }
+
+    .status-bar.success {
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(34, 197, 94, 0.4);
+      color: #dcfce7;
+    }
+
+    .status-bar.error {
+      background: rgba(248, 113, 113, 0.18);
+      border-color: rgba(248, 113, 113, 0.45);
+      color: #fee2e2;
+    }
+
+    .status-bar.hidden {
+      display: none;
+    }
+
+    .quiz-opinion-textarea:focus {
+      outline: none;
+      border-color: rgba(221, 160, 70, 0.8);
+      box-shadow: 0 0 18px rgba(221, 160, 70, 0.2);
+    }
+
+    .quiz-grade-select:focus {
+      outline: none;
+      border-color: rgba(56, 189, 248, 0.9);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+      background: rgba(16, 29, 55, 0.95);
+    }
+
+    .quiz-grade-select option {
+      background: #0a1929;
+      color: #eef8ff;
+    }
+
+    .quiz-result h3 {
+      color: #fbbf24;
+      font-size: 1.8rem;
+      margin: 0 0 1.5rem 0;
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+      text-align: center;
+    }
+
+    .quiz-result p {
+      color: #cbd5e1;
+      font-size: 1.1rem;
+      margin: 0 0 2rem 0;
+      line-height: 1.6;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <main class="info-area" id="infoArea">
+      <section class="department-card" id="quizCard">
+        <div class="hero-block">
+          <div class="hero-text">
+            <span class="eyebrow">Cuestionario</span>
+            <h1>Juego de preguntas</h1>
+            <p class="subtitle">Ingresa el código 2026 y tu nombre para comenzar el cuestionario sobre los departamentos del Perú.</p>
+          </div>
+        </div>
+
+        <article class="content-block quiz-content-block" id="quizSection">
+          <div class="quiz-intro" id="quizIntro">
+            <p id="quizWelcomeText">Ya estás autenticado. Presiona iniciar para comenzar el cuestionario.</p>
+            <button type="button" class="quiz-start-button" id="quizStartButton">Iniciar juego</button>
+            <button type="button" class="quiz-start-button" id="logoutButton">Cerrar sesión</button>
+            <div class="quiz-error hidden" id="quizError">Debes iniciar sesión primero.</div>
+          </div>
+          <div class="quiz-question-block hidden" id="quizQuestionBlock">
+            <div class="quiz-header">
+              <span id="quizPlayerName"></span>
+              <span id="quizProgress"></span>
+            </div>
+            <div class="quiz-question-text" id="quizQuestionText"></div>
+            <div class="quiz-options" id="quizOptions"></div>
+            <button type="button" class="quiz-next-button hidden" id="quizNextButton">Siguiente pregunta</button>
+          </div>
+          <div class="quiz-result hidden" id="quizResult">
+            <h3>Resultado final</h3>
+            <p id="quizScoreText"></p>
+            <div class="quiz-result-form">
+              <label>
+                Grado:
+                <select id="gradeSelect" class="quiz-grade-select">
+                  <option value="">Seleccionar grado</option>
+                  <option value="1 primaria">1 primaria</option>
+                  <option value="2 primaria">2 primaria</option>
+                  <option value="3 primaria">3 primaria</option>
+                  <option value="4 primaria">4 primaria</option>
+                  <option value="5 primaria">5 primaria</option>
+                  <option value="6 primaria">6 primaria</option>
+                </select>
+              </label>
+              <label>
+                Opinión sobre los 25 departamentos:
+                <textarea id="opinionInput" class="quiz-opinion-textarea" rows="4" placeholder="Escribe aquí tu opinión..."></textarea>
+              </label>
+              <div id="sendStatusBar" class="status-bar hidden">Preparado para enviar</div>
+            </div>
+            <div class="login-buttons">
+              <button type="button" class="quiz-start-button" id="quizRestartButton">Intentar de nuevo</button>
+              <button type="button" class="quiz-start-button" id="quizSendButton">Enviar</button>
+              <button type="button" class="quiz-start-button" id="quizExitButton">Volver al inicio</button>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <!-- Reproductor de música de fondo para el cuestionario -->
+  <audio id="backgroundMusic" loop>
+    <source src="fondo de musica del cuestionario .mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="quiz.js"></script>
+
+  <script>
+    // Control de música de fondo
+    const audioElement = document.getElementById('backgroundMusic');
+    let musicStarted = false;
+
+    // Recuperar posición anterior de la música
+    function restoreAudioPosition() {
+      const savedTime = sessionStorage.getItem('musicPosition');
+      if (savedTime && audioElement) {
+        audioElement.currentTime = parseFloat(savedTime);
+      }
+    }
+
+    // Guardar posición de la música cada segundo
+    function saveAudioPosition() {
+      if (audioElement && musicStarted) {
+        sessionStorage.setItem('musicPosition', audioElement.currentTime.toString());
+      }
+    }
+
+    // Iniciar música en el primer clic del usuario
+    function initializeMusic() {
+      if (!musicStarted && audioElement) {
+        musicStarted = true;
+        restoreAudioPosition();
+        audioElement.play().catch(err => console.log('Autoplay no permitido:', err));
+        // Guardar posición periódicamente
+        setInterval(saveAudioPosition, 500);
+        // Remover listeners después de iniciar
+        document.removeEventListener('click', initializeMusic);
+        document.removeEventListener('keypress', initializeMusic);
+        document.removeEventListener('touchstart', initializeMusic);
+      }
+    }
+
+    // Iniciar música en el primer clic, tecla o toque
+    document.addEventListener('click', initializeMusic, { once: true });
+    document.addEventListener('keypress', initializeMusic, { once: true });
+    document.addEventListener('touchstart', initializeMusic, { once: true });
+
+    // Si ya hay música guardada en sessionStorage, iniciar automáticamente
+    if (sessionStorage.getItem('musicPosition')) {
+      initializeMusic();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso al juego</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="login-page">
+  <div class="app-shell">
+    <main class="info-area" id="infoArea">
+      <section class="department-card login-card" id="loginCard">
+        <div class="hero-block">
+          <div class="hero-text">
+            <span class="eyebrow">Bienvenido</span>
+            <h1>Acceso al cuestionario</h1>
+            <p class="subtitle">Introduce tu usuario y el código de acceso para continuar.</p>
+          </div>
+        </div>
+
+        <article class="content-block" id="loginSection">
+          <form class="quiz-intro login-form" id="loginForm">
+            <label>
+              Usuario
+              <input type="text" id="loginUserInput" placeholder="Tu usuario" autocomplete="username" />
+            </label>
+            <label>
+              Código de acceso
+              <input type="text" id="loginPassInput" placeholder="2026" maxlength="4" autocomplete="one-time-code" />
+            </label>
+            <div class="login-buttons">
+              <button type="submit" class="quiz-start-button" id="loginButton">Entrar</button>
+              <a href="index.html" class="quiz-start-button">Volver</a>
+            </div>
+            <div class="quiz-error hidden" id="loginError">Usuario o código incorrecto. El código es 2026.</div>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <style>
+    body.login-page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      margin: 0;
+      background: radial-gradient(circle at top left, rgba(192, 132, 252, 0.25), transparent 14%),
+        radial-gradient(circle at right center, rgba(236, 72, 153, 0.14), transparent 16%),
+        linear-gradient(180deg, #150426 0%, #2a0b3b 45%, #12041e 100%);
+      color: #f8f4ff;
+    }
+    .app-shell {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    .login-card {
+      width: 100%;
+      padding: 2.5rem 2rem;
+      border-radius: 34px;
+      box-shadow: 0 30px 120px rgba(173, 64, 255, 0.22);
+      background: rgba(22, 5, 47, 0.94);
+      border: 1px solid rgba(192, 132, 252, 0.28);
+      backdrop-filter: blur(18px);
+    }
+    .login-form {
+      display: grid;
+      gap: 1.25rem;
+    }
+    .login-form label {
+      display: grid;
+      gap: 0.65rem;
+      color: #d8b4fe;
+      font-weight: 700;
+    }
+    .login-form input {
+      width: 100%;
+      padding: 1rem 1.1rem;
+      border-radius: 18px;
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      background: rgba(40, 9, 58, 0.9);
+      color: #f8f4ff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .login-form input:focus {
+      border-color: rgba(236, 72, 153, 0.85);
+      box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.16);
+    }
+    .login-form input::placeholder {
+      color: rgba(248, 113, 206, 0.55);
+    }
+    .login-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .login-buttons .quiz-start-button {
+      width: 100%;
+    }
+    .quiz-start-button {
+      width: 100%;
+      padding: 1.1rem 1.5rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #fb7185 100%);
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-size: 1rem;
+      box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .quiz-start-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(236, 72, 153, 0.35);
+      background: linear-gradient(135deg, #d946ef 0%, #f472b6 50%, #fb7185 100%);
+    }
+    .quiz-start-button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(236, 72, 153, 0.25);
+    }
+    .login-card .subtitle {
+      color: #e9d5ff;
+      margin: 0.85rem 0 1.7rem;
+      line-height: 1.8;
+      max-width: 360px;
+    }
+    .quiz-error {
+      background: rgba(236, 72, 153, 0.12);
+      color: #fed7ff;
+      border: 2px solid rgba(236, 72, 153, 0.35);
+    }
+  </style>
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginUserInput = document.getElementById('loginUserInput');
+    const loginPassInput = document.getElementById('loginPassInput');
+    const loginError = document.getElementById('loginError');
+
+    if (sessionStorage.getItem('quizUser')) {
+      window.location.href = 'quiz.html';
+    }
+
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const user = loginUserInput.value.trim();
+      const pass = loginPassInput.value.trim();
+      if (user && pass === '2026') {
+        sessionStorage.setItem('quizUser', user);
+        window.location.href = 'quiz.html';
+      } else {
+        loginError.classList.remove('hidden');
+      }
+    });
+
+    loginUserInput.addEventListener('input', () => {
+      loginError.classList.add('hidden');
+    });
+    loginPassInput.addEventListener('input', () => {
+      loginError.classList.add('hidden');
+    });
+  </script>
+
+  <!-- Reproductor de música de fondo para el cuestionario -->
+  <audio id="backgroundMusic" loop>
+    <source src="fondo de musica del cuestionario .mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Control de música de fondo
+    const audioElement = document.getElementById('backgroundMusic');
+    let musicStarted = false;
+
+    // Recuperar posición anterior de la música
+    function restoreAudioPosition() {
+      const savedTime = sessionStorage.getItem('musicPosition');
+      if (savedTime && audioElement) {
+        audioElement.currentTime = parseFloat(savedTime);
+      }
+    }
+
+    // Guardar posición de la música cada segundo
+    function saveAudioPosition() {
+      if (audioElement && musicStarted) {
+        sessionStorage.setItem('musicPosition', audioElement.currentTime.toString());
+      }
+    }
+
+    // Iniciar música en el primer clic del usuario
+    function initializeMusic() {
+      if (!musicStarted && audioElement) {
+        musicStarted = true;
+        restoreAudioPosition();
+        audioElement.play().catch(err => console.log('Autoplay no permitido:', err));
+        // Guardar posición periódicamente
+        setInterval(saveAudioPosition, 500);
+        // Remover listeners después de iniciar
+        document.removeEventListener('click', initializeMusic);
+        document.removeEventListener('keypress', initializeMusic);
+        document.removeEventListener('touchstart', initializeMusic);
+      }
+    }
+
+    // Iniciar música en el primer clic, tecla o toque
+    document.addEventListener('click', initializeMusic, { once: true });
+    document.addEventListener('keypress', initializeMusic, { once: true });
+    document.addEventListener('touchstart', initializeMusic, { once: true });
+
+    // Si ya hay música guardada en sessionStorage, iniciar automáticamente
+    if (sessionStorage.getItem('musicPosition')) {
+      initializeMusic();
+    }
+  </script>
+</body>
+</html>

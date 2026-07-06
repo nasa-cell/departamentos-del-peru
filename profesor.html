@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso Profesor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="login-page">
+  <div class="app-shell">
+    <main class="info-area" id="infoArea">
+      <section class="department-card login-card" id="loginCard">
+        <div class="hero-block">
+          <div class="hero-text">
+            <span class="eyebrow">Acceso Profesor</span>
+            <h1>Ingrese la contraseña</h1>
+            <p class="subtitle">Para acceder, escriba la contraseña correcta y luego presione Ingresar.</p>
+          </div>
+        </div>
+
+        <article class="content-block" id="loginSection">
+          <form class="quiz-intro login-form" id="professorForm">
+            <label>
+              Contraseña
+              <input type="password" id="professorPassInput" placeholder="Contraseña" autocomplete="current-password" />
+            </label>
+            <div class="login-buttons">
+              <button type="submit" class="quiz-start-button" id="professorEnterButton">Ingresar</button>
+              <a href="index.html" class="quiz-start-button">Volver</a>
+            </div>
+            <div class="quiz-error hidden" id="professorError">Contraseña incorrecta. La contraseña es profesor2026.</div>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const professorForm = document.getElementById('professorForm');
+    const professorPassInput = document.getElementById('professorPassInput');
+    const professorError = document.getElementById('professorError');
+
+    professorForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const pass = professorPassInput.value.trim();
+      if (pass === 'profesor2026') {
+        window.location.href = 'perfiles.html';
+      } else {
+        professorError.classList.remove('hidden');
+      }
+    });
+
+    professorPassInput.addEventListener('input', () => {
+      professorError.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>
